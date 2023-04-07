@@ -12,9 +12,6 @@ honap31 = ['Január', 'Március', 'Május', 'Július', 'Augusztus', 'Október', 
 napok_szama = 1
 atlag_max = 0
 
-'''legkis_label = None
-legnagy_label = None'''
-
 
 def generalas():
     global honap_neve, nap_ma, min_lista, max_lista, napok_szama
@@ -92,6 +89,10 @@ def uj_adatok():
         else:
             tablazat.insert(parent="", index=i, values=("", "", "", "", ""))
 
+
+def kilépés():
+    root.destroy()
+
     # ======================   GUI ===========================================
 
 
@@ -132,7 +133,7 @@ alatta_frame.grid(row=2, column=0, padx=10, pady=10)
 
 # Frame létrehozása a táblázat alatt
 masodik_frame = tk.Frame(root)
-masodik_frame.grid(row=3, column=0, padx=10, pady=10)
+masodik_frame.grid(row=3, column=0, padx=10, pady=5)
 
 # Button elhelyezése a Frame-en belül
 uj_adatok_gomb = tk.Button(alatta_frame, text="Új adatok generalasa", command=uj_adatok)
@@ -154,7 +155,9 @@ atlag_max_label.pack(side=tk.LEFT, padx=10, pady=5)
 
 legkis_label = tk.Label(masodik_frame, text="A legalacsonyabb hőmérséklet: {:.2f} °C".format(legalacsonyabb))
 legnagy_label = tk.Label(masodik_frame, text="A legmagasabb hőmérséklet: {:.2f} °C".format(legmagasabb))
-legkis_label.pack(side=tk.LEFT, padx=10, pady=5)
-legnagy_label.pack(side=tk.LEFT, padx=10, pady=5)
+legkis_label.grid(row=0, column=0, padx=10, pady=5)
+legnagy_label.grid(row=0, column=1, padx=10, pady=5)
+kilepes_gomb = tk.Button(masodik_frame, text="Kilépés", command=kilépés)
+kilepes_gomb.grid(row=0, column=5, padx=10, pady=5)
 
 root.mainloop()
