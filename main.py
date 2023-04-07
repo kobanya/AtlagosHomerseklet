@@ -8,9 +8,9 @@ max_lista = []
 honap2829 = ['Február']
 honap30 = ['Április', 'Június', 'Szeptember', 'November']
 honap31 = ['Január', 'Március', 'Május', 'Július', 'Augusztus', 'Október', 'December']
+napok_szama = 1
+atlag_max = 0
 
-
-# honap_neve = ""
 
 def generalas():
     global honap_neve, nap_ma, min_lista, max_lista, napok_szama
@@ -47,16 +47,51 @@ def szamitas(napok_szama):
     return kulonbseg
 
 
+# átlagok kiszámítása
 def atlagok():
+    global atlag_max, atlag_min
     atlag_max = sum(max_lista) / napok_szama
     atlag_min = sum(min_lista) / napok_szama
     return f'Az átlagos minimum hőmérséklet: {atlag_min:.2f} °C\nAz átlagos maximum hőmérséklet: {atlag_max:.2f} °C'
 
 
+atlagok()
+
+
+def uj_adatok():
+    global napok_szama, honap_neve, nap_ma, min_lista, max_lista, atlag_min_label, atlag_max_label
+    generalas()
+    atlagok()
+    kulonbseg = szamitas(napok_szama)
+    tablazat.delete(*tablazat.get_children())
+
+    honap_neve_str = "".join(honap_neve)
+    cimke2.config(text="A hónap neve: " + honap_neve_str)
+
+    napok_szama_str = str(napok_szama)
+    cimke3.config(text="A napok száma: " + napok_szama_str)
+
+    atlag_min_label.config(text="Az átlagos minimum hőmérséklet: {:.2f} °C".format(atlag_min))
+    atlag_max_label.config(text="Az átlagos maximum hőmérséklet: {:.2f} °C".format(atlag_max))
+
+    atlag_min_label.pack(side=tk.LEFT, padx=10, pady=5)
+    atlag_max_label.pack(side=tk.LEFT, padx=10, pady=5)
+
+    for i in range(napok_szama):
+        if i < napok_szama:
+            tablazat.insert(parent="", index=i, values=(
+            honap_neve, nap_ma[i], f"{min_lista[i]:.2f} °C", f"{max_lista[i]:.2f} °C", f"{kulonbseg[i]:.2f} °C"))
+        else:
+            tablazat.insert(parent="", index=i, values=("", "", "", "", ""))
+
+
+# _____________________________ GUI ______________________________________________________
+
+
 # GUI létrehozása
 root = tk.Tk()
-root.geometry("1100x800")
-root.title("Hőingadozás")
+root.geometry("1200x500")  # a felület, ablak mérete
+root.title("Hőingadozás")  # az ablak neve
 
 # Címke hozzáadása
 cimke1 = tk.Label(root, text="Generált Hőingadozás napi bontásban")
@@ -68,7 +103,7 @@ kulonbseg = szamitas(napok_szama)
 
 # Táblázat előállítása
 headers = ["Hónap", "Nap", "Minimum hőmérséklet", "Maximum hőmérséklet", "Hőmérséklet-különbség"]
-tablazat = ttk.Treeview(root, columns=headers, show="headings", height=31)  # height a megjelenítendő sorik száma
+tablazat = ttk.Treeview(root, columns=headers, show="headings", height=20)  # height a megjelenítendő sorik száma
 
 # Oszlopok címkéinek hozzáadása
 for col in headers:
@@ -84,28 +119,6 @@ tablazat.grid()
 honap_neve_str = "".join(honap_neve)
 napok_szama_str = str(napok_szama)
 
-
-# Új adatok generálása gomb
-def uj_adatok():
-    global napok_szama, honap_neve, nap_ma, min_lista, max_lista
-    generalas()
-    kulonbseg = szamitas(napok_szama)
-    tablazat.delete(*tablazat.get_children())
-
-    honap_neve_str = "".join(honap_neve)
-    cimke2.config(text="A hónap neve: " + honap_neve_str)
-
-    napok_szama_str = str(napok_szama)
-    cimke3.config(text="A napok száma: " + napok_szama_str)
-
-    for i in range(napok_szama):
-        if i < napok_szama:
-            tablazat.insert(parent="", index=i, values=(
-            honap_neve, nap_ma[i], f"{min_lista[i]:.2f} °C", f"{max_lista[i]:.2f} °C", f"{kulonbseg[i]:.2f} °C"))
-        else:
-            tablazat.insert(parent="", index=i, values=("", "", "", "", ""))
-
-
 # Frame létrehozása a táblázat alatt
 alatta_frame = tk.Frame(root)
 alatta_frame.grid(row=2, column=0, padx=10, pady=10)
@@ -120,5 +133,12 @@ cimke2.pack(side=tk.LEFT, padx=5, pady=5)
 
 cimke3 = tk.Label(alatta_frame, text="A napok száma " + str(napok_szama))
 cimke3.pack(side=tk.LEFT, padx=10, pady=5)
+
+# Átlagok kiírása
+atlagok()
+atlag_min_label = tk.Label(alatta_frame, text="Az átlagos minimum hőmérséklet: {:.2f} °C".format(atlag_min))
+atlag_max_label = tk.Label(alatta_frame, text="Az átlagos maximum hőmérséklet: {:.2f} °C".format(atlag_max))
+atlag_min_label.pack(side=tk.LEFT, padx=10, pady=5)
+atlag_max_label.pack(side=tk.LEFT, padx=10, pady=5)
 
 root.mainloop()
